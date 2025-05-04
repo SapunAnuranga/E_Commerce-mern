@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ShopContext } from '../context/ShopContext';
 import { assets } from '../assets/assets';
+import ReletedProducts from '../components/ReletedProducts';
 
 const Product = () => {
   const { productId } = useParams();
@@ -112,10 +113,10 @@ const Product = () => {
           )}
         </div>
       </div>
-      
+
       {/* Display Related Products Section */}
       <div className=''>
-
+          <ReletedProducts category={productData.category} subCategory={productData.subCategory}/>
       </div>
     </div>
   ) : <div className='opacity-0'></div>
