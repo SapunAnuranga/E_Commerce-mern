@@ -6,7 +6,7 @@ import ReletedProducts from '../components/ReletedProducts';
 
 const Product = () => {
   const { productId } = useParams();
-  const { products, currency } = useContext(ShopContext);
+  const { products, currency, addToCart } = useContext(ShopContext);
   const [productData, setProductData] = useState(null);
   const [image, setImage] = useState('');
   const [size, setSize] = useState('');
@@ -74,7 +74,7 @@ const Product = () => {
               </div>
             </div>
             {/* Add to Cart Button */}
-            <button className='bg-black mt-2 text-white px-8 py-3 text-sm active:bg-gray-700'> Add to Cart </button>
+            <button onClick={() => addToCart(productData._id, size)} className='bg-black mt-2 text-white px-8 py-3 text-sm active:bg-gray-700'> Add to Cart </button>
             <hr className='mt-6 sm:w-4/5' />
             <div className='text-sm text-gray-500 mt-4 flex flex-col gap-1'>
               <p>100% Orginal Product.</p>
