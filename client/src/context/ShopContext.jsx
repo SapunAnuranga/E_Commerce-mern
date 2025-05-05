@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
 import { products } from "../assets/assets"; 
 import { toast } from "react-toastify";
 
@@ -12,6 +12,7 @@ const ShopContextProvider = (props) => {
   const [showSearch, setShowSearch] = useState(false);
   const [cartItem, setCartItem] = useState({});
 
+  // Add item to cart
   const addToCart = async (itemId, size) => {
 
     if(!size){
@@ -35,6 +36,7 @@ const ShopContextProvider = (props) => {
     setCartItem(cartData); 
   };
 
+  // Calculate total items in the cart
   const getCartCount = () => {
     let totalCount = 0; 
     for (const itemId in cartItem) {
@@ -50,7 +52,46 @@ const ShopContextProvider = (props) => {
     }
     return totalCount;
   };
-  
+
+  // Update item quantity
+  const updateQuantity = async (itemId, size, quantity) => {
+    let cartData = structuredClone(cartItem);
+
+    if (quantity <= 0) {
+      if (cartData[itemId]) {
+        delete cartData[itemId][size];
+        if (Object.keys(cartData[itemId]).length === 0) {
+          delete cartData[itemId];
+        }
+      }
+    } else {
+      if (!cartData[itemId]) cartData[itemId] = {};
+      cartData[itemId][size] = quantity;
+    }
+
+    setCartItem(cartData);
+  };
+
+  // Calculate total amount in the cart
+  const getCartAmount = () => {
+    let totalAmount = 0;
+
+    for (const itemId in cartItem) {
+      const item = products.find((p) => p._id === itemId);
+      if (!item) continue;
+
+      const sizes = cartItem[itemId];
+      for (const size in sizes) {
+        const quantity = sizes[size];
+        if (quantity > 0) {
+          totalAmount += item.price * quantity;
+        }
+      }
+    }
+
+    return totalAmount;
+  };
+
   const value = {
     products,
     currency,
@@ -61,7 +102,9 @@ const ShopContextProvider = (props) => {
     setShowSearch,
     cartItem,
     addToCart,
-    getCartCount
+    getCartCount,
+    updateQuantity,
+    getCartAmount
   };
 
   return (
