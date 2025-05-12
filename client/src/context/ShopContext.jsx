@@ -1,7 +1,8 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { products } from "../assets/assets"; 
+//import { products } from '../assets/assets';
 import { toast } from "react-toastify";
+import axios from 'axios';
 
 export const ShopContext = createContext();
 
@@ -9,9 +10,11 @@ const ShopContextProvider = (props) => {
 
   const currency = '$';
   const delivery_fee = 10;
+  const blackendUrl = import.meta.env.VITE_BACKEND_URL
   const [search, setSearch] = useState('');
   const [showSearch, setShowSearch] = useState(false);
   const [cartItem, setCartItem] = useState({});
+  const [products, setProducts] = useState([]);
   const navigate = useNavigate();
   
 
@@ -95,6 +98,26 @@ const ShopContextProvider = (props) => {
     return totalAmount;
   };
 
+const getProductsData = async () => {
+  try {
+    const response = await axios.get(blackendUrl + '/api/product/list');
+    
+    if (response.data.success) {
+      setProducts(response.data.product)
+      
+    }else{
+      toast.error(response.data.message)
+    }
+
+  } catch (error) {
+    console.error(error.message);
+  }
+}
+
+useEffect(()=>{
+  getProductsData();
+},[])
+
   const value = {
     products,
     currency,
@@ -109,6 +132,7 @@ const ShopContextProvider = (props) => {
     updateQuantity,
     getCartAmount,
     navigate,
+    blackendUrl,
   };
 
   return (
